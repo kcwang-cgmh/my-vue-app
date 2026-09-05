@@ -66,7 +66,10 @@ onMounted(loadProduct)
       <label>圖片網址<input v-model="form.photo" type="url" placeholder="選填" /></label>
       <label>產品描述<textarea v-model="form.description" rows="5" maxlength="500" placeholder="選填"></textarea></label>
       <p v-if="errorMessage" class="error" role="alert">{{ errorMessage }}</p>
-      <div class="actions"><RouterLink class="cancel-button" :to="{ name: 'products' }">取消</RouterLink><button type="submit" :disabled="isSubmitting">{{ isSubmitting ? '儲存中...' : '儲存變更' }}</button></div>
+      <div class="actions">
+        <RouterLink class="cancel-button" :to="{ name: 'products' }">取消</RouterLink>
+        <button type="submit" :disabled="isSubmitting">{{ isSubmitting ? '儲存中...' : '儲存變更' }}</button>
+      </div>
     </form>
   </section>
 </template>

@@ -6,6 +6,7 @@ import type { Product } from '../types/Product'
 const products = ref<Product[]>([])
 const isLoading = ref(true)
 const errorMessage = ref('')
+const deletingProductId = ref<number | null>(null)
 const apiUrl = '/api/Products'
 const currencyFormatter = new Intl.NumberFormat('zh-TW', {
   style: 'currency',
@@ -72,6 +73,24 @@ const getProductDetailRoute = (product: Product) => ({
     product: toRaw(product) as unknown as HistoryState,
   },
 })
+
+const deleteProduct = async (product: Product) => {
+  if (!window.confirm(`確定要刪除「${product.name}」嗎？此操作無法復原。`)) return
+
+  deletingProductId.value = product.productID
+  try {
+    const response = await fetch(`/api/Products/${product.productID}`, { method: 'DELETE' })
+    if (!response.ok) {
+      const detail = await response.text()
+      throw new Error(detail || `刪除產品失敗（${response.status}）`)
+    }
+    products.value = products.value.filter((item) => item.productID !== product.productID)
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : '刪除產品失敗。'
+  } finally {
+    deletingProductId.value = null
+  }
+}
 
 onMounted(fetchProducts)
 </script>
@@ -155,6 +174,9 @@ onMounted(fetchProducts)
             <RouterLink class="edit-button" :to="{ name: 'EditProduct', params: { id: product.productID } }" :aria-label="`編輯${product.name}`">
               編輯
             </RouterLink>
+            <button class="delete-button" type="button" :disabled="deletingProductId === product.productID" @click="deleteProduct(product)">
+              {{ deletingProductId === product.productID ? '刪除中...' : '刪除' }}
+            </button>
           </div>
         </div>
       </article>
@@ -470,6 +492,24 @@ h1 {
   color: #fff;
   background: #1f6d68;
   transform: translateY(-1px);
+}
+
+.delete-button {
+  display: inline-block;
+  padding: 8px 13px;
+  border: 1px solid #b3432b;
+  border-radius: 8px;
+  color: #b3432b;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.delete-button:hover:not(:disabled) {
+  color: #fff;
+  background: #b3432b;
 }
 
 .product-footer strong {
