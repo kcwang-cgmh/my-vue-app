@@ -15,6 +15,7 @@ import { RouterLink, RouterView } from 'vue-router';
 
       <nav class="main-nav" aria-label="主要導覽">
         <RouterLink to="/products">產品目錄</RouterLink>
+        <RouterLink to="/my-products">我的產品</RouterLink>
       </nav>
     </header>
 
