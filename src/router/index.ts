@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import EditProductView from '../views/EditProductView.vue'
 import MyProductsView from '../views/MyProductsView.vue'
 import ProductDetailView from '../views/ProductDetailView.vue'
 import ProductsView from '../views/ProductsView.vue'
@@ -24,6 +25,11 @@ const router = createRouter({
             path: '/my-products',
             name: 'my-products',
             component: MyProductsView,
+        },
+        {
+            path: '/products/edit/:id',
+            name: 'EditProduct',
+            component: EditProductView,
         },
         {
             path: '/:pathMatch(.*)*',

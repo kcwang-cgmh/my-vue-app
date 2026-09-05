@@ -148,8 +148,13 @@ onMounted(fetchProducts)
             {{ product.description || '尚未提供商品描述。' }}
           </p>
           <div class="product-footer">
-            <span>單價</span>
-            <strong>{{ formatPrice(product.unitPrice) }}</strong>
+            <div class="product-price">
+              <span>單價</span>
+              <strong>{{ formatPrice(product.unitPrice) }}</strong>
+            </div>
+            <RouterLink class="edit-button" :to="{ name: 'EditProduct', params: { id: product.productID } }" :aria-label="`編輯${product.name}`">
+              編輯
+            </RouterLink>
           </div>
         </div>
       </article>
@@ -439,6 +444,32 @@ h1 {
   border-top: 1px solid #edf1ef;
   color: #93a0a2;
   font-size: 0.75rem;
+}
+
+.product-price {
+  display: grid;
+  gap: 3px;
+}
+
+.edit-button {
+  display: inline-block;
+  padding: 8px 13px;
+  border: 1px solid #1f6d68;
+  border-radius: 8px;
+  color: #1f6d68;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.edit-button:hover {
+  color: #fff;
+  background: #1f6d68;
+  transform: translateY(-1px);
 }
 
 .product-footer strong {
