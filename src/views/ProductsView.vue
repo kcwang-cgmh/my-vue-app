@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import type { Product } from '../types/Product'
 
 const products = ref<Product[]>([])
@@ -126,7 +127,14 @@ onMounted(fetchProducts)
             <span class="product-status">可販售</span>
             <span>{{ formatOrderCount(product.orders) }}</span>
           </div>
-          <h2>{{ product.name }}</h2>
+          <h2>
+            <RouterLink
+              class="product-name-link"
+              :to="{ name: 'product-detail', params: { productID: product.productID } }"
+            >
+              {{ product.name }}
+            </RouterLink>
+          </h2>
           <p class="product-description">
             {{ product.description || '尚未提供商品描述。' }}
           </p>
@@ -390,6 +398,18 @@ h1 {
   color: #18252d;
   font-size: 1.35rem;
   font-weight: 750;
+}
+
+.product-name-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.product-name-link:hover {
+  color: #1f6d68;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .product-description {

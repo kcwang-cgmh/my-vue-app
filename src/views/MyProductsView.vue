@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import type { MyProduct } from '../types/MyProduct';
 
 const products = ref<MyProduct[]>([]);
 
 const getData = async () => {
-  const response = await fetch('http://localhost:5109/api/Products')
+  const response = await fetch('/api/Products')
   products.value = await response.json()
 }
 
@@ -26,9 +27,28 @@ const getData = async () => {
     <tbody>
       <tr v-for="p in products" :key="p.productID">
         <td>{{ p.productID }}</td>
-        <td>{{ p.name }}</td>
+        <td>
+          <RouterLink
+            class="product-name-link"
+            :to="{ name: 'product-detail', params: { productID: p.productID } }"
+          >
+            {{ p.name }}
+          </RouterLink>
+        </td>
         <td>{{ p.unitPrice }}</td>
       </tr>
     </tbody>
   </table>
 </template>
+
+<style scoped>
+.product-name-link {
+  color: #1f6d68;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.product-name-link:hover {
+  color: #c95837;
+}
+</style>
