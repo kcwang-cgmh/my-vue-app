@@ -5,3 +5,4 @@
 <img width="920" height="1542" alt="image" src="https://github.com/user-attachments/assets/056d2e45-c9d5-4568-97d2-c08e65568ec8" />
 
 - `設定 API 允許 CORS`
+- `請將 { 程式碼中指定 interface 的行數 } 抽到 /types 資料夾中`
