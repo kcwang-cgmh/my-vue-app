@@ -5,12 +5,8 @@ import type { Product } from '../types/Product'
 
 const route = useRoute()
 const product = ref<Product | null>(null)
-const isLoading = ref(true)
 const errorMessage = ref('')
 const productId = computed(() => String(route.params.productID ?? ''))
-const apiUrl = computed(() => `/api/Products/${encodeURIComponent(productId.value)}`)
-let activeRequestController: AbortController | null = null
-let requestSequence = 0
 const currencyFormatter = new Intl.NumberFormat('zh-TW', {
   style: 'currency',
   currency: 'TWD',
@@ -36,57 +32,18 @@ const isProduct = (value: unknown): value is Product => {
   )
 }
 
-const fetchProduct = async () => {
-  const requestId = ++requestSequence
-  activeRequestController?.abort()
-  activeRequestController = null
+const loadProductFromHistoryState = () => {
+  const stateProduct: unknown = window.history.state?.product
+  const routeProductId = Number(productId.value)
 
-  const id = productId.value
-  product.value = null
-  errorMessage.value = ''
-
-  if (!/^\d+$/.test(id) || Number(id) <= 0) {
-    isLoading.value = false
-    errorMessage.value = '產品編號格式不正確'
+  if (isProduct(stateProduct) && stateProduct.productID === routeProductId) {
+    product.value = stateProduct
+    errorMessage.value = ''
     return
   }
 
-  const requestController = new AbortController()
-  activeRequestController = requestController
-  isLoading.value = true
-
-  try {
-    const response = await fetch(apiUrl.value, { signal: requestController.signal })
-    if (response.status === 404) {
-      throw new Error('找不到這項產品')
-    }
-
-    if (!response.ok) {
-      throw new Error(`API 回應錯誤（${response.status}）`)
-    }
-
-    const data: unknown = await response.json()
-    if (!isProduct(data)) {
-      throw new Error('API 回傳的產品資料格式不符合預期')
-    }
-
-    if (requestId !== requestSequence) {
-      return
-    }
-
-    product.value = data
-  } catch (error) {
-    if (requestController.signal.aborted || requestId !== requestSequence) {
-      return
-    }
-
-    errorMessage.value = error instanceof Error ? error.message : '無法取得產品資料'
-  } finally {
-    if (requestId === requestSequence) {
-      activeRequestController = null
-      isLoading.value = false
-    }
-  }
+  product.value = null
+  errorMessage.value = '請從產品目錄點選產品名稱，以載入產品明細。'
 }
 
 const formatPrice = (price: number) => currencyFormatter.format(price)
@@ -99,7 +56,7 @@ const getProductImage = (productData: Product) => {
 const formatOrderCount = (orders: unknown[] | null) =>
   orders?.length ? `${orders.length} 筆訂單` : '尚無訂單'
 
-watch(productId, fetchProduct, { immediate: true })
+watch(productId, loadProductFromHistoryState, { immediate: true })
 </script>
 
 <template>
@@ -109,17 +66,11 @@ watch(productId, fetchProduct, { immediate: true })
       返回產品目錄
     </RouterLink>
 
-    <div v-if="isLoading" class="state-panel" role="status" aria-live="polite">
-      <div class="spinner" aria-hidden="true"></div>
-      <p>正在取得產品明細...</p>
-    </div>
-
-    <div v-else-if="errorMessage" class="state-panel state-panel--error" role="alert">
+    <div v-if="errorMessage" class="state-panel state-panel--error" role="alert">
       <div class="state-icon" aria-hidden="true">!</div>
       <div>
         <h1>無法載入產品明細</h1>
         <p>{{ errorMessage }}</p>
-        <button class="retry-button" type="button" @click="fetchProduct">再試一次</button>
       </div>
     </div>
 
@@ -230,34 +181,6 @@ watch(productId, fetchProduct, { immediate: true })
   background: #c95837;
   font-size: 1.2rem;
   font-weight: 800;
-}
-
-.spinner {
-  width: 22px;
-  height: 22px;
-  border: 3px solid #d5e3e1;
-  border-top-color: #1f6d68;
-  border-radius: 50%;
-  animation: spin 700ms linear infinite;
-}
-
-.retry-button {
-  margin-top: 18px;
-  padding: 9px 14px;
-  border: 0;
-  border-radius: 8px;
-  color: #fff;
-  background: #1f6d68;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.84rem;
-  font-weight: 700;
-  transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-.retry-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(31, 109, 104, 0.26);
 }
 
 .detail-card {
@@ -410,12 +333,6 @@ watch(productId, fetchProduct, { immediate: true })
   color: #18252d;
   font-size: 0.92rem;
   font-weight: 700;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @media (max-width: 800px) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { onMounted, ref, toRaw } from 'vue'
+import { RouterLink, type HistoryState } from 'vue-router'
 import type { Product } from '../types/Product'
 
 const products = ref<Product[]>([])
@@ -63,6 +63,15 @@ const getProductImage = (product: Product) =>
 
 const formatOrderCount = (orders: unknown[] | null) =>
   orders?.length ? `${orders.length} 筆訂單` : '尚無訂單'
+
+const getProductDetailRoute = (product: Product) => ({
+  name: 'product-detail' as const,
+  params: { productID: product.productID },
+  state: {
+    // History API 只接受可結構化複製的資料；API 回傳的 Product 符合這項限制。
+    product: toRaw(product) as unknown as HistoryState,
+  },
+})
 
 onMounted(fetchProducts)
 </script>
@@ -130,7 +139,7 @@ onMounted(fetchProducts)
           <h2>
             <RouterLink
               class="product-name-link"
-              :to="{ name: 'product-detail', params: { productID: product.productID } }"
+              :to="getProductDetailRoute(product)"
             >
               {{ product.name }}
             </RouterLink>
