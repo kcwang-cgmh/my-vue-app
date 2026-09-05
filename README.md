@@ -7,3 +7,5 @@
 - 設定 API 允許 CORS
 - 請將 { 程式碼中指定 interface 的行數 } 抽到 /types 資料夾中
 - 按一下產品名稱，會跳到另外一個畫面，顯示產品的明細資料
+- 在 ProductView 中已經有取得 products 了 ，不能直接將已載入的產品物件帶到 ProductDetailView 中，這樣就不用再呼叫API 了
+- 
