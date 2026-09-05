@@ -1,5 +1,5 @@
-# Vue 3 + TypeScript + Vite
+## 上課示範提示詞
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+- 附圖是 API，請加入VUE 的 /products 路由，可以顯示 API 傳回來的資料
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+<img width="920" height="1542" alt="image" src="https://github.com/user-attachments/assets/056d2e45-c9d5-4568-97d2-c08e65568ec8" />
