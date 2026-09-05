@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import type { Product } from '../models/Product'
+import type { Product } from '../types/Product'
 
 const products = ref<Product[]>([])
 const isLoading = ref(true)
